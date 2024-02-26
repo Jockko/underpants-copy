@@ -20,7 +20,9 @@ var _ = {};
 *   _.identity(5) === 5
 *   _.identity({a: "b"}) === {a: "b"}
 */
-
+_.identity = function(value){
+    return value;
+}
 
 /** _.typeOf
 * Arguments:
@@ -41,7 +43,15 @@ var _ = {};
 * _.typeOf("javascript") -> "string"
 * _.typeOf([1,2,3]) -> "array"
 */
-
+_.typeOf = function(value){
+    if(Array.isArray(value)){
+        return "array";
+    }
+    else if(value === null){
+        return "null";
+    }
+    return typeof value;
+}
 
 /** _.first
 * Arguments:
@@ -60,7 +70,29 @@ var _ = {};
 *   _.first(["a", "b", "c"], 1) -> "a"
 *   _.first(["a", "b", "c"], 2) -> ["a", "b"]
 */
-
+_.first = function(array, number){
+    //if the array isn't an array
+    if(Array.isArray(array) === false){ 
+        //return empty array
+        return [];
+    }
+    //if number is undefined or number isn't a number at all
+    if(number === undefined || number === NaN){
+        //return the first element
+        return array[0];
+    };
+    //E: What if the number is negative?
+    if(number < 0){
+        return [];
+    }
+    if(number > array.length){
+        return array;
+    }
+    //return the entire array up to the number given but not including number
+    //use slice combined with number to not include number itself, but up to the last 
+    //index before number
+    return array.slice(0, number);
+}  
 
 /** _.last
 * Arguments:
@@ -79,7 +111,22 @@ var _ = {};
 *   _.last(["a", "b", "c"], 1) -> "c"
 *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
 */
-
+_.last = function(array, number){
+//if number is undefined or NAN, return the last element in the array
+if(!Array.isArray(array)){
+return [];
+}
+if(number === undefined || number === NaN){
+    return array[array.length - 1];
+}
+if(number < 0){
+    return [];
+}
+if(number > array.length){
+    return array;
+}
+return array.slice(1, array[number.length - 1])
+}
 
 /** _.indexOf
 * Arguments:
@@ -96,7 +143,17 @@ var _ = {};
 *   _.indexOf(["a","b","c"], "c") -> 2
 *   _.indexOf(["a","b","c"], "d") -> -1
 */
-
+_.indexOf = function(array, value){
+    //loop through the array
+    for(let i = 0; i < array.length; i++){
+        //check if value matches the current element
+        if(array[i] === value){
+         //return the index of that value
+        return i;
+        }
+    }
+    return -1;
+}
 
 /** _.contains
 * Arguments:
@@ -112,7 +169,18 @@ var _ = {};
 * Examples:
 *   _.contains([1,"two", 3.14], "two") -> true
 */
-
+_.contains = function(array, value){
+   //loop through the array
+   for(let i = 0; i < array.length; i++){
+       //determine if the array contains our value
+    if(array[i] === value){
+        //if it does, return true
+        return true;
+    }
+    //otherwise if it doesn't, return false
+}
+return false;
+}
 
 /** _.each
 * Arguments:
@@ -129,7 +197,18 @@ var _ = {};
 *   _.each(["a","b","c"], function(e,i,a){ console.log(e)});
 *      -> should log "a" "b" "c" to the console
 */
-
+_.each = function(collection, callback){
+    if(Array.isArray(collection)){
+        for(let i = 0; i < collection.length; i++){
+            callback(collection[i], i, collection)
+        }
+    }
+    else {
+        for(let key in collection){
+            callback(collection[key], key, collection);
+        }
+    }
+}
 
 /** _.unique
 * Arguments:
@@ -140,7 +219,25 @@ var _ = {};
 * Examples:
 *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
 */
-
+_.unique = function(array){
+//need a new array to hold our nonduplicates
+let result = [];
+//loop through the array
+for(let i = 0; i < array.length; i++){
+    //check if any element repeats itself
+    //invoke the indexOf function we created
+    if(result.indexOf(array[i]) === -1){
+        result.push(array[i]);
+    }
+    // _.indexOf(array, array[i])
+    //indexOf returns the first index
+    
+}
+return result;
+console.log("resulT", result);
+//if so remove them
+//return a new array with duplicates removed
+}
 
 /** _.filter
 * Arguments:
@@ -157,7 +254,19 @@ var _ = {};
 * Extra Credit:
 *   use _.each in your implementation
 */
+_.filter = function(array, func){
+//create a new array for passed values aka values that returned true
+let passed = [];
+//loop through the given array
+for(let i = 0; i < array.length; i++){
+    //if you call the func on each element and it passes
+    if(func(array[i], i, array)){
+        passed.push(array[i]);
+    }
 
+}
+return passed;
+}
 
 /** _.reject
 * Arguments:
@@ -171,7 +280,20 @@ var _ = {};
 * Examples:
 *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
 */
-
+_.reject = function(array, func){
+    //create a new array for elements that returned false
+    let failed = [];
+    //loop through the array
+    for(let i = 0; i < array.length; i++){
+        //check if the func called on the current element is falsy
+        if(!func(array[i], i, array)){
+        //if so add it to the failed array
+            failed.push(array[i]);
+        }
+    }
+    //return failed array
+    return failed;
+}
 
 /** _.partition
 * Arguments:
@@ -191,7 +313,29 @@ var _ = {};
 *   }); -> [[2,4],[1,3,5]]
 }
 */
-
+_.partition = function(array, func){
+//create a new array to hold our two 2 sub arrays
+let bothArrays = [];
+//create a falsy values arr
+let failedArr = [];
+//create a truthy values array
+let passedArr = [];
+//loop through the array
+for(let i = 0; i < array.length; i++){
+//if calling func on each item in the array results to false
+if(!func(array[i], i, array)){
+//push that failed value into our failed array
+failedArr.push(array[i]);
+}
+//else if it passes
+else if(func(array[i], i, array)){
+passedArr.push(array[i])
+};
+}
+bothArrays[0] = passedArr;
+bothArrays[1] = failedArr;
+return bothArrays;
+}
 
 /** _.map
 * Arguments:
@@ -208,7 +352,27 @@ var _ = {};
 * Examples:
 *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
 */
-
+_.map = function(collection, func){
+//create a new result array to be returned later
+let result = [];
+//if collection is an array
+if(Array.isArray(collection)){
+//loop through the collection
+for(let i = 0; i < collection.length; i++){
+//call func on each element index and collection. Must save to result;
+result.push(func(collection[i], i, collection));
+}
+}
+//if collection is an object
+else if(typeof collection === "object"){
+    //loop through that object
+    for(let key in collection){
+    //call func on each key, value, and the collection. Save to result 
+    result.push(func(collection[key], key, collection))
+    }
+}
+return result;
+}
 
 /** _.pluck
 * Arguments:
@@ -221,6 +385,16 @@ var _ = {};
 *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
 */
 
+
+_.pluck = function(arrayObjs, property){
+//use map to get the array containing the value
+let result = _.map(arrayObjs, function(object){
+//return the value of that object's property
+    return object[property];
+})
+//return our result;
+return result;
+}
 
 /** _.every
 * Arguments:
@@ -242,7 +416,48 @@ var _ = {};
 *   _.every([2,4,6], function(e){return e % 2 === 0}) -> true
 *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
 */
+_.every = function(collection, func){
+if(Array.isArray(collection)){
+if(func === undefined){
+for(let i = 0; i < collection.length; i++){
+    //if current element is NOT truthy
+    if(!collection[i]){
+        return false;
+    }
+}
+}
+}
+else {
+for(let i = 0; i < collection.length; i++){
+    //Determine if the result of invoking func is NOT truthy
+    if(!func(collection[i], i, collection)){
+        //if even ONE of these items fails the test
+        return false;
+    }
+}
+}
 
+if(func === undefined){
+    for(let key in collection){
+        if(!collection[key]){
+            //if collection[key] is falsy
+            //return false;
+            return false;
+        }
+    }
+}
+else {
+    for(let key in collection){
+        if(!func(collection[key], key, collection)){
+            //if the result of func called on every key value pai is false
+            //return false;
+            return false;
+        }
+    }
+}
+//otherwise everything passed return true
+return true;
+}
 
 /** _.some
 * Arguments:
@@ -264,6 +479,49 @@ var _ = {};
 *   _.some([1,3,5], function(e){return e % 2 === 0}) -> false
 *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
 */
+_.some = function(collection, func){
+    if(Array.isArray(collection)){
+        if(func === undefined){
+        for(let i = 0; i < collection.length; i++){
+            //if current element is NOT truthy
+            if(collection[i]){
+                return true;
+            }
+        }
+        }
+        }
+        else {
+        for(let i = 0; i < collection.length; i++){
+            //Determine if the result of invoking func is NOT truthy
+            if(func(collection[i], i, collection)){
+                //if even ONE of these items fails the test
+                return true;
+            }
+        }
+        }
+        
+        if(func === undefined){
+            for(let key in collection){
+                if(collection[key]){
+                    //if collection[key] is falsy
+                    //return false;
+                    return true;
+                }
+            }
+        }
+        else {
+            for(let key in collection){
+                if(func(collection[key], key, collection)){
+                    //if the result of func called on every key value pai is false
+                    //return false;
+                    return true;
+                }
+            }
+        }
+        //otherwise everything passed return true
+        return false;
+        }
+        
 
 
 /** _.reduce
@@ -284,7 +542,19 @@ var _ = {};
 * Examples:
 *   _.reduce([1,2,3], function(previousSum, currentValue, currentIndex){ return previousSum + currentValue }, 0) -> 6
 */
-
+ _.reduce = function(array, func, seed){
+//loop through the array
+let prevRes;
+for(let i = 0; i < array.length; i++){
+    //if no seed is given use the first element in the array
+    if(seed === undefined){
+        seed = array[0];
+    }
+    //call func for every element in array
+    prevRes = func(seed, array[i], i)
+}
+return prevRes;
+}
 
 /** _.extend
 * Arguments:
@@ -300,7 +570,9 @@ var _ = {};
 *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
 *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
 */
-
+_.extend = function(obj1, obj2, ...obj){
+return Object.assign(obj1, obj2, ...obj);
+}
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
