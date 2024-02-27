@@ -551,9 +551,10 @@ for(let i = 0; i < array.length; i++){
         seed = array[0];
     }
     //call func for every element in array
-    prevRes = func(seed, array[i], i)
+    prevRes = func(seed, array[i], i);
+    seed = func(prevRes, array[i], i);
 }
-return prevRes;
+return seed;
 }
 
 /** _.extend
