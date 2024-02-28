@@ -544,13 +544,18 @@ _.some = function(collection, func){
 */
  _.reduce = function(array, func, seed){
 //loop through the array
-for(let i = 0; i < array.length; i++){
-    //if no seed is given use the first element in the array
-    if(seed === undefined){
-        seed = array[0];
+//if no seed is given use the first element in the array
+if(seed === undefined){
+    seed = array[0];
+    for(let i = 1; i < array.length; i++){
+        //call func for every element in array
+        seed = func(seed, array[i], i);
     }
-    //call func for every element in array
-    seed = func(seed, array[i], i);
+}
+else {
+    for(let i = 0; i < array.length; i++){
+        seed = func(seed, array[i], i);
+    }
 }
 return seed;
 }
