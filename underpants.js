@@ -544,15 +544,13 @@ _.some = function(collection, func){
 */
  _.reduce = function(array, func, seed){
 //loop through the array
-let prevRes;
 for(let i = 0; i < array.length; i++){
     //if no seed is given use the first element in the array
     if(seed === undefined){
         seed = array[0];
     }
     //call func for every element in array
-    prevRes = func(seed, array[i], i);
-    seed = func(prevRes, array[i], i);
+    seed = func(seed, array[i], i);
 }
 return seed;
 }
